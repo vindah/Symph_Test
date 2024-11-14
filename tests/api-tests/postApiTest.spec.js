@@ -7,7 +7,7 @@ test.describe.serial('API tests with CRUD operations', () => {
 
   const apiUrl = process.env.API_URL;
 
-  test('verify that endpoint can read total number of posts and store it in a variable', async ({ request }) => {
+  test('verify that endpoint can read total number of posts and store it in a variable - GET', async ({ request }) => {
     const response = await request.get(`${apiUrl}/posts`);
     expect(response.status()).toBe(200);
 
@@ -17,7 +17,7 @@ test.describe.serial('API tests with CRUD operations', () => {
     console.log(`Total number of posts: ${initialTotalPosts}`);
   });
 
-  test('verify that endpoint can create a new post and store its ID', async ({ request }) => {
+  test('verify that endpoint can create a new post and store its ID - POST/CREATE', async ({ request }) => {
     const response = await request.post(`${apiUrl}/posts`, {
       data: {
         title: `Patrick's Post`,
@@ -33,8 +33,8 @@ test.describe.serial('API tests with CRUD operations', () => {
     expect(post.title).toBe(`Patrick's Post`);
   });
 
-  test('Verify that the created post by ID can be retrieved', async ({ request }) => {
-    console.log(createdPostId)
+  test('Verify that the created post by ID can be retrieved - GET BY ID', async ({ request }) => {
+    console.log(createdPostId) //just logged to be sure we are getting right thing(for review)
     const response = await request.get(`${apiUrl}/posts/${createdPostId}`);
     expect(response.status()).toBe(404); // I updated the status to this because fetching data does not show newly updated data since it seems response is mocked to ensure consistency
 
@@ -44,7 +44,18 @@ test.describe.serial('API tests with CRUD operations', () => {
     // expect(post.body).toBe('This is a test post created for the assessment');
   });
 
-  
+  test('Verify that the created post can be updated - PATCH', async ({ request }) => {
+    const id= 2;
+    const response = await request.patch(`${apiUrl}/posts/${id}`, {
+      data: {
+        title: `Patrick's Post updated title`,
+      },
+    });
+    expect(response.status()).toBe(200);
+
+    const updatedPost = await response.json();
+    expect(updatedPost.title).toBe(`Patrick's Post updated title`);
+  });
 
 
 });
