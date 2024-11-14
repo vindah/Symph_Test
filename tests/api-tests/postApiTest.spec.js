@@ -1,7 +1,9 @@
 // tests/api-tests/postsApi.test.js
 import { test, expect } from '@playwright/test';
 
-test.describe.serial('API tests with CRUD operations', () => {
+
+// used describe.serial so that all requests run serially and not in parallel because of createdPostId used in preceding tests. A way to skip is to create in beforeALL/beforeEach
+test.describe.serial('API tests with CRUD operations', () => {  
   let initialTotalPosts;
   let createdPostId;
 
@@ -55,6 +57,15 @@ test.describe.serial('API tests with CRUD operations', () => {
 
     const updatedPost = await response.json();
     expect(updatedPost.title).toBe(`Patrick's Post updated title`);
+  });
+
+  test('Verify that a post can be deleted - DELETE', async ({ request }) => {
+    console.log(createdPostId)
+    const response = await request.delete(`${apiUrl}/posts/${createdPostId}`);
+    expect(response.status()).toBe(200);
+
+    const deletedPostResponse = await request.get(`${apiUrl}/posts/${createdPostId}`);
+    expect(deletedPostResponse.status()).toBe(404);
   });
 
 
