@@ -68,5 +68,15 @@ test.describe.serial('API tests with CRUD operations', () => {
     expect(deletedPostResponse.status()).toBe(404);
   });
 
+  test('Verify the total number of posts remains consistent', async ({ request }) => {
+    const response = await request.get(`${apiUrl}/posts`);
+    expect(response.status()).toBe(200);
+
+    const posts = await response.json();
+    const currentTotalPosts = posts.length;
+
+    expect(currentTotalPosts).toBe(initialTotalPosts);
+  });
+
 
 });
